@@ -12,13 +12,16 @@ if(isset($_POST['get'])){
 		case "insertType":
 			echo insertType($_POST['libelle']);
 			break;
+		case "reload":
+			reload($_POST['what']);
+			break;
 		default:
 			break;
 	}
 }
 
 function chargerNiveaux(){
-	include("controller/connectBdd.php");
+	include("connectBdd.php");
 	$query = "SELECT * FROM niveau_realisations";
 	$stmt = $bdd->prepare($query);
 	if($stmt->execute()){
@@ -32,7 +35,7 @@ function chargerNiveaux(){
 
 /* sans param : charger pour tableau réalisations || avec param : charger pour select de tri */
 function chargerStatuts($typeChargement = null){
-	include("controller/connectBdd.php");
+	include("connectBdd.php");
 	if(isset($typeChargement)){
 		$query = "SELECT * FROM statut_realisations";
 		$stmt = $bdd->prepare($query);
@@ -57,8 +60,8 @@ function chargerStatuts($typeChargement = null){
 }
 
 function chargerTypes($forTable = null){
-	include("controller/connectBdd.php");
-	$query = "SELECT * FROM type_realisations";
+	include("connectBdd.php");
+	$query = "SELECT * FROM type_realisations WHERE supprime = 0";
 	$stmt = $bdd->prepare($query);
 	if($stmt->execute()){
 		while($row = $stmt->fetch()){
@@ -66,6 +69,33 @@ function chargerTypes($forTable = null){
 				echo'<option value="'.$row['N'].'">'.$row["Libelle"].'</option>';
 			else
 				echo'<tr><td value="'.$row['N'].'">'.$row['Libelle'].'</td></tr>';
+		}
+	}else{
+		echo'<option>Erreur lors du chargement des types</option>';
+	}
+}
+
+function reload($what){
+	include("connectBdd.php");
+	$query = "";
+	$query2 = "";
+	switch($what){
+		case "types":
+			$query = "SELECT * FROM type_realisations WHERE supprime = 0";
+			break;
+		case "statuts&niveaux":
+			$query = "SELECT * FROM niveau_realisations WHERE supprime = 0";
+			$query2 = "SELECT * FROM statut_realisations WHERE supprime = 0";
+			break;
+		case "membres":
+			$query = "SELECT * FROM membres WHERE admin = 1";
+			break;
+	}
+	
+	$stmt = $bdd->prepare($query);
+	if($stmt->execute()){
+		while($row = $stmt->fetch()){
+			echo'<tr><td value="'.$row['N'].'">'.$row['Libelle'].'</td></tr>';
 		}
 	}else{
 		echo'<option>Erreur lors du chargement des types</option>';
@@ -88,7 +118,7 @@ function chargerMembres(){
 
 /*sans param : tous les auteurs, avec param : auteurs ayant 1 réalisation au moins */
 function chargerAuteurs($typeGet){
-	include("controller/connectBdd.php");
+	include("connectBdd.php");
 	if(isset($typeGet))
 		$query = "SELECT DISTINCT Auteur as Libelle FROM realisations";
 	else

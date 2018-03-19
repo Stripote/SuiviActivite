@@ -12,26 +12,28 @@
 	overflow-y:scroll;
 	overflow: auto;
 }
-#paramTypeTable{
-	width:auto;
-}
+
 #paramTypeTable thead{
 	
 }
-#paramTypeTable tbody tr {
+#paramTypeTable tbody tr, .param_list tbody tr {
 	display:inline-grid;
 	width:100%;
 	cursor:pointer;
 }
-#paramTypeTable tbody {
+#paramTypeTable tbody, .param_list tbody {
 	float:left;
 	display:inline-block;
 	height:10em; /* 5 times the equivalent of a text "size". */
 	overflow-y:scroll;
+	width:100%;
 }
-#deleteTypeLibelle{
+
+.param_deleteBtn{
 	padding-top: 0.8rem;
 }
+
+
 #realisationTable thead tr th:nth-child(1), #realisationTable tbody tr:first-child td:nth-child(1){ /* column 1 ! */
 	width:15%;
 }

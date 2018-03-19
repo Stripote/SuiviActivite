@@ -52,75 +52,6 @@ $("#btnDelete").on("confirmed.bs.confirmation", function(){
 		clearForm();
 });
 
-/*On supprime le type*/
-$("#deleteTypeLibelle").on("confirmed.bs.confirmation", function(){
-	var idToDelete = $("#idTypeLibelle").val();
-	console.log(idToDelete);
-	$.ajax({
-		type:'POST', 
-		url:'./controller/controller.php',
-		data: {get : "deleteType", id : idToDelete },
-	success: function(data){
-		showSomething(data);
-		ResetInputTypeLibelle();
-	},
-	error: function(){
-		 //showSomething(data);
-		 showSomething(data);
-		 ResetInputTypeLibelle();
-	 }
-	});
-	
-	/*On reload la liste*/
-	//AJAX --> GetTypes --> fill the list with datas
-	
-	/*On reset l'input*/
-	
-});
-
-$("#newTypeForm").on("submit", function(){
-	event.preventDefault();
-	var idToUpdate = $("#idTypeLibelle").val();
-	var libelleToUpdate = $("#inputTypeLibelle").val();
-	if(idToUpdate != ""){
-		$.ajax({
-			type:'POST', 
-			url:'./controller/controller.php',
-			data: {get : "updateType", id : idToUpdate, libelle : libelleToUpdate},
-			success: function(data){
-				showSomething(data);
-				ResetInputTypeLibelle();
-			},
-			error: function(){
-				 //showSomething(data);
-				 showSomething(data);
-				 ResetInputTypeLibelle();
-			 }
-		});
-	}else{
-		$.ajax({
-			type:'POST', 
-			url:'./controller/controller.php',
-			data: {get : "insertType", libelle : libelleToUpdate},
-			success: function(data){
-				showSomething(data);
-				ResetInputTypeLibelle();
-			},
-			error: function(){
-				 //showSomething(data);
-				 showSomething(data);
-				 ResetInputTypeLibelle();
-			 }
-		});
-	}
-	
-	
-	
-	/*On reload la liste*/
-	//AJAX --> GetTypes --> fill the list with datas
-	/*On reset l'input*/
-	
-});
 
 
 
@@ -156,19 +87,6 @@ $("#loginForm").submit(function(){
 	return false;
 });
 
-/*Click sur suppression libellé type*/
-$("#paramTypeTable td").click( function(){
-	$("#idTypeLibelle").val( $(this).attr("value") );
-	$("#inputTypeLibelle").val($(this).text());
-	$("#inputTypeLibelle").removeClass("border-success").addClass("border-warning");
-	$("#submitTypeLibelle").removeClass("btn-outline-success fa fa-plus-square").addClass("btn-outline-warning fa fa-edit");
-	$("#clearTypeLibelle").attr("hidden", false);
-	$("#deleteTypeLibelle").attr("hidden", false);
-});
-
-$("#clearTypeLibelle").click( function(){
-	ResetInputTypeLibelle();
-});
 
 
 
@@ -312,7 +230,7 @@ function getStatutIcon(statut){
 
 function chargerModification(idRealisation, clickedElement){
 	/*Pour surbrillance quand supprimé*/
-	toMark = clickedElement.closest("tr");
+	toMark = clickedElement.find("tr");
 	$("#bodyForm").LoadingOverlay("show");
 	$.ajax({
 		type:'POST', 
@@ -502,24 +420,7 @@ function login(dataPassed){
 	});
 }
 
-/*Envois une requete Ajax au serveur pour vérifier la connexion d'un utilisateur */
-function checkIfLogged(){
-	$.ajax({
-		type:'POST', 
-		data: { "check" : 1},
-		url: "./controller/login.php",
-		success: function(data){
-			if(data == "true")
-				return true;
-			else
-			    return false;
-		},
-		error: function(){
-			 showSomething("connexion failed:"+data);
-			 return false;
-		}
-	});
-}
+
 function activeDeleteBtnIfLogged(){
 	$.ajax({
 		type:'POST', 
@@ -838,6 +739,11 @@ function exportData(){
 	});
 }
 
+
+
+/* |||||||||||||||||||||||||||||||||||          PAGE PARAMETRES         ||||||||||||||||||||||||||||||||||||*/
+
+/*Fonction créée en one shot, pas adaptable aux autres composants similaires*/
 function ResetInputTypeLibelle(){
 	$("#idTypeLibelle").val("");
 	$("#inputTypeLibelle").val("");
@@ -845,5 +751,202 @@ function ResetInputTypeLibelle(){
 	$("#submitTypeLibelle").removeClass("btn-outline-warning fa fa-edit").addClass(" btn-outline-success fa fa-plus-square");
 	$("#clearTypeLibelle").attr("hidden", true);
 	$("#deleteTypeLibelle").attr("hidden", true);
+	$("#paramTypeTable tbody tr").remove();
+	$.ajax({
+		type:'POST', 
+		url:'./controller/controller.php',
+		data: {get : "reloadTypes"},
+		success: function(data){
+			$("#paramTypeTable tbody").append(data);
+		}, 
+		error: function(){
+			
+		}
+	});
+}
+/*Même fonction, adaptée pour fonctionner avec des classes : réutilisable*/
+function resetParamsPageInputs(){
+	$(".active").find(".param_inputId").val("");
+	$(".active").find(".param_inputLibelle").val("");
+	$(".active").find(".param_inputLibelle").removeClass("border-warning ").addClass("border-success");
+	$(".active").find(".param[type='submit']").removeClass("btn-outline-warning fa fa-edit").addClass(" btn-outline-success fa fa-plus-square");
+	$(".active").find(".param_clearBtn").attr("hidden", true);
+	$(".active").find(".param_deleteBtn").attr("hidden", true);
+	$(".active").find(".param_list tbody tr").remove();
+	var nameForm = $(".active form").attr("nom_formulaire");
+	$.ajax({
+		type:'POST', 
+		url:'./controller/controller.php',
+		data: {get : "reload", what : nameForm},
+		success: function(data){
+			$(".active").find(".param_list tbody").append(data);
+		}, 
+		error: function(){
+			
+		}
+	});
 }
 
+
+
+
+/*On supprime le type*/
+$("#deleteTypeLibelle").on("confirmed.bs.confirmation", function(){
+	var idToDelete = $("#idTypeLibelle").val();
+	console.log(idToDelete);
+	$.ajax({
+		type:'POST', 
+		url:'./controller/controller.php',
+		data: {get : "deleteType", id : idToDelete },
+	success: function(data){
+		showSomething(data);
+		resetParamsPageInputs();
+	},
+	error: function(){
+		 //showSomething(data);
+		 showSomething(data);
+		 resetParamsPageInputs();
+	 }
+	});
+});
+
+$(document).on("submit", ".active form", function(){
+	event.preventDefault();
+	var nameForm = $(".active form").attr("nom_formulaire");
+	var idToUpdate = $(".active .param_inputId").val();
+	var libelleToUpdate = $(".active .param_inputLibelle").val();
+	
+	switch(nameForm){
+		case "types":
+				if(idToUpdate != ""){
+					$.ajax({
+						type:'POST', 
+						url:'./controller/controller.php',
+						data: {get : "updateType", id : idToUpdate, libelle : libelleToUpdate},
+						success: function(data){
+							showSomething(data);
+							resetParamsPageInputs();
+						},
+						error: function(){
+							 //showSomething(data);
+							 showSomething(data);
+							 resetParamsPageInputs();
+						 }
+					});
+				}else{
+					$.ajax({
+						type:'POST', 
+						url:'./controller/controller.php',
+						data: {get : "insertType", libelle : libelleToUpdate},
+						success: function(data){
+							showSomething(data);
+							resetParamsPageInputs();
+						},
+						error: function(){
+							 //showSomething(data);
+							 showSomething(data);
+							 resetParamsPageInputs();
+						 }
+					});
+				}	
+			break;
+		case "statuts&niveaux":
+				if(idToUpdate != ""){
+					$.ajax({
+						type:'POST', 
+						url:'./controller/controller.php',
+						data: {get : "updateNivStat", id : idToUpdate, libelle : libelleToUpdate},
+						success: function(data){
+							showSomething(data);
+							resetParamsPageInputs();
+						},
+						error: function(){
+							 //showSomething(data);
+							 showSomething(data);
+							 resetParamsPageInputs();
+						 }
+					});
+				}else{
+					$.ajax({
+						type:'POST', 
+						url:'./controller/controller.php',
+						data: {get : "insertNivStat", libelle : libelleToUpdate},
+						success: function(data){
+							showSomething(data);
+							resetParamsPageInputs();
+						},
+						error: function(){
+							 //showSomething(data);
+							 showSomething(data);
+							 resetParamsPageInputs();
+						 }
+					});
+				}	
+			break;
+		case "membres":
+				if(idToUpdate != ""){
+					$.ajax({
+						type:'POST', 
+						url:'./controller/controller.php',
+						data: {get : "updateMembre", id : idToUpdate, libelle : libelleToUpdate},
+						success: function(data){
+							showSomething(data);
+							ResetInputTypeLibelle();
+						},
+						error: function(){
+							 //showSomething(data);
+							 showSomething(data);
+							 ResetInputTypeLibelle();
+						 }
+					});
+				}else{
+					$.ajax({
+						type:'POST', 
+						url:'./controller/controller.php',
+						data: {get : "insertMembre", libelle : libelleToUpdate},
+						success: function(data){
+							showSomething(data);
+							ResetInputTypeLibelle();
+						},
+						error: function(){
+							 //showSomething(data);
+							 showSomething(data);
+							 ResetInputTypeLibelle();
+						 }
+					});
+				}	
+			break;
+		default:
+			break;
+	}
+	
+	
+});
+
+/*Click sur suppression libellé type*/
+$("#paramTypeTable").on("click", "td", function(){
+	$("#idTypeLibelle").val( $(this).attr("value") );
+	$("#inputTypeLibelle").val($(this).text());
+	$("#inputTypeLibelle").removeClass("border-success").addClass("border-warning");
+	$("#submitTypeLibelle").removeClass("btn-outline-success fa fa-plus-square").addClass("btn-outline-warning fa fa-edit");
+	$("#clearTypeLibelle").attr("hidden", false);
+	$("#deleteTypeLibelle").attr("hidden", false);
+});
+
+/*REUSABLE*/
+$(document).on("click", ".active .param_clearBtn", function(){
+	resetParamsPageInputs();
+});
+
+/*Click sur suppression libellé type : REUSABLE*/
+$(document).on("click", ".active .param_list td", function(){
+	//console.log("clicked:"+this);
+	$(".active").find(".param_inputId").val( $(this).attr("value"));
+	$(".active").find(".param_inputLibelle").val( $(this).text() );
+	$(".active").find(".param_inputLibelle").removeClass("border-success").addClass("border-warning");
+	$(".active").find(".param[type='submit']").removeClass("btn-outline-success fa fa-plus-square").addClass("btn-outline-warning fa fa-edit");
+	$(".active").find(".param_clearBtn").attr("hidden", false);
+	$(".active").find(".param_deleteBtn").attr("hidden", false);
+	//$(".active").find(".param_list tr").remove();
+	
+});
