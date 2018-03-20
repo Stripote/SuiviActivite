@@ -1010,16 +1010,32 @@ $(document).on("click", ".active .param_clearBtn", function(event){
 	appel fonction php : envoyer mail avec un code généré, avec une date/heure d'émission.
 }
 */
+$(document).on("confirmed.bs.confirmation", "#btnResetPass", function(event){
+	$(event.target).attr("hidden", true);
+	$.ajax({
+		type:'POST', 
+		url:'./controller/reset.php',
+		data: {action : "sendEmail", login : $.cookie("SuiviActiviteLogin") },
+		success: function(data){
+			showSomething(data);
+			console.log(data);
+		},
+		error: function(){
+			showSomething(data, event.target);
+			console.log(data);
+		 }
+	});	
+});
 
 $(document).on("submit", "#newNiveauStatutForm", function(event){
 	var target = event.taget;
 	$(target).find("input[name='code']").closest("div").attr("hidden", true).removeAttr("required");
 	var code = $(target).find("input[name='code']").val();
 	var login = $.cookie('connectedUser');
-	/*$.ajax({
+	$.ajax({
 		type:'POST', 
 		url:'./controller/reset.php',
-		data: {action : "resetPassword", login : login , code : code  },
+		data: {action : "checkCode", login : login , code : code  },
 		success: function(data){
 			if(data == "success"){
 				alert("Code correct");
@@ -1031,20 +1047,8 @@ $(document).on("submit", "#newNiveauStatutForm", function(event){
 			showSomething(data, event.target);
 		 }
 	});
-	*/
+	
 	alert("Code correct");
 });
 
-
-
-/*
-//Envoi du code via formulaire de saisie{
-	check = check si le code dernier code généré pour cet utilisateur est encore valable
-	if(check)
-		On teste si le code envoyé est le même que celui généré
-		(Optionnel)On créé un token de session si besoins (au cas ou date limite de validité du code, qu'on enregistre qu'il était bon lorsqu'il l'a saisi ?)
-}
-
-
-*/
 

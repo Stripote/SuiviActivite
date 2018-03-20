@@ -174,7 +174,7 @@
 				</div>
 				<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 container">
 					<div class="card bg-light"> 
-						<span title="Êtes-vous sûr ?" class="param_deleteBtn m-2 p-2 btn btn-outline-primary btn-sm" data-toggle="confirmation-delete"
+						<span id="btnResetPass" title="Êtes-vous sûr ?" class="param_deleteBtn m-2 p-2 btn btn-outline-primary btn-sm" data-toggle="confirmation-delete"
 								data-btn-ok-label="Oui" data-btn-ok-icon="glyphicon glyphicon-share-alt"
 								data-btn-ok-class="btn-success"
 								data-btn-cancel-label="Non" data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
