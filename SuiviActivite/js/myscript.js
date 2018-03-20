@@ -1009,7 +1009,35 @@ $(document).on("click", ".active .param_clearBtn", function(event){
 	input[password].attr("hidden", true);
 	appel fonction php : envoyer mail avec un code généré, avec une date/heure d'émission.
 }
+*/
 
+$(document).on("submit", "#newNiveauStatutForm", function(event){
+	var target = event.taget;
+	$(target).find("input[name='code']").closest("div").attr("hidden", true).removeAttr("required");
+	var code = $(target).find("input[name='code']").val();
+	var login = $.cookie('connectedUser');
+	/*$.ajax({
+		type:'POST', 
+		url:'./controller/reset.php',
+		data: {action : "resetPassword", login : login , code : code  },
+		success: function(data){
+			if(data == "success"){
+				alert("Code correct");
+			}else if(data == "failure"){
+				alert("Code FAUX");
+			}
+		},
+		error: function(){
+			showSomething(data, event.target);
+		 }
+	});
+	*/
+	alert("Code correct");
+});
+
+
+
+/*
 //Envoi du code via formulaire de saisie{
 	check = check si le code dernier code généré pour cet utilisateur est encore valable
 	if(check)
