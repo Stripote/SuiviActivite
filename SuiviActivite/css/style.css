@@ -13,18 +13,24 @@
 	overflow: auto;
 }
 
-#paramTypeTable thead{
-	
+#div_formParam{
+	min-height:30rem;
 }
-#paramTypeTable tbody tr, .param_list tbody tr {
+#div_myAccount{
+	min-height:20em;
+}
+#div_myAccount .card{
+	margin:1%;
+	height:19em;
+}
+.param_list tbody tr {
 	display:inline-grid;
 	width:100%;
 	cursor:pointer;
 }
-#paramTypeTable tbody, .param_list tbody {
+.param_list tbody {
 	float:left;
 	display:inline-block;
-	height:10em; /* 5 times the equivalent of a text "size". */
 	overflow-y:scroll;
 	width:100%;
 }
@@ -32,6 +38,17 @@
 .param_deleteBtn{
 	padding-top: 0.8rem;
 }
+
+#param_MemberForm tbody, #param_TypeForm tbody{
+	height:18em;
+}
+#param_StatForm tbody{
+	height:12.5em;
+}
+#param_NivForm tbody{
+	height:12.5em;
+}
+
 
 
 #realisationTable thead tr th:nth-child(1), #realisationTable tbody tr:first-child td:nth-child(1){ /* column 1 ! */
